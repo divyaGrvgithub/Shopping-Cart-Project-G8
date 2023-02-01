@@ -1,10 +1,12 @@
 const express = require("express")
+const bodyParser = require('body-parser')
 const router = require("./router/route")
 const mongoose = require("mongoose")
 const app = express()
-
+const multer= require("multer");
 app.use(express.json())
-
+app.use( multer().any())
+app.use(bodyParser.json());
 mongoose.set("strictQuery",true)
 mongoose.connect("mongodb+srv://divyamala_:Dt25042000knp@divyamala.0cofsch.mongodb.net/group8Database",{
     useNewUrlParser:true
@@ -15,6 +17,6 @@ mongoose.connect("mongodb+srv://divyamala_:Dt25042000knp@divyamala.0cofsch.mongo
 
 app.use("/",router)
 
-app.listen(process.env.Port||3000,()=>{
-    console.log("Express App Running On Port",+(process.env.Port||3000))
+app.listen(3000,()=>{
+    console.log("This is App Running On Port "+3000)
 })
