@@ -2,8 +2,9 @@ const userModel = require('../models/userModel')
 const loginjoi = require('../validation/validator')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const mongoose = require('mongoose')
 const login = async (req,res) =>{
-    let data = req.body
+   try{ let data = req.body
     let email = data.email
     let password = data.password
 
@@ -23,5 +24,26 @@ const login = async (req,res) =>{
     res.setHeader('x-api-key',token)
     res.status(200).send({ status: true, message: "User login successfully", data: { userId: findeUser._id, token: token } });
 }
+catch(err){
+    return res.status(500).send({status:false, message:err.message})
+}
+}
 
-module.exports = {login}
+
+const getUserProfile= async (req,res) =>{
+    try{
+        userId = req.params.userId
+       if(!mongoose.Types.ObjectId.isValid(userId)) return res.status(400).send({status:false,message:"invalid id"})
+
+       let userProfile = await userModel.findById(userId)
+       if(!userProfile) return res.status(404).send({status:false, message:"user not found"})
+       let profile= userProfile.toObject()
+       delete profile.password
+       return res.status(200).send({status:true, message:"User profile details",data:profile})
+
+    }
+    catch(err){
+        return res.status(500).send({status:false, message: err.message})
+    }
+}
+module.exports = {login,getUserProfile}
