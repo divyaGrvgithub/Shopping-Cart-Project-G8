@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const joi = require('joi')
 
 //=========================// isValidEmail //===================================
 
@@ -89,8 +90,6 @@ const isValidSize = function (value) {
   }
   return true;
 }
-
-const joi = require('joi')
 
 const userlogin = joi.object({
     email:joi.string().trim().regex(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).message("please enter valid email"),
