@@ -12,7 +12,7 @@ router.put("/user/:userId/profile",middleware.authentication,middleware.authoriz
 router.post("/products",productController.createProduct)
 router.get("/products",productController.getAllProduct)
 router.get("/products/:productId",productController.getProductsById)
-router.delete("/products/:productId",productController.deleteProduct)
+router.delete("/products/:productId",productController.deleteProductById)
 
 router.all("/*", async function (req, res) {
     return res.status(400).send({ status: false, message: "Path is not valid" });

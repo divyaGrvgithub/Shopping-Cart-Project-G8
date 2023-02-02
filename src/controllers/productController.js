@@ -108,7 +108,7 @@ let getProductsById = async (req, res) => {
     }
 }
 
-let deleteProduct = async (req, res) => {
+let deleteProductById = async (req, res) => {
     try {
         let productId = req.params.productId
 
@@ -135,4 +135,4 @@ let deleteProduct = async (req, res) => {
     }
 }
 
-module.exports = { createProduct, getAllProduct, getProductsById, deleteProduct }
+module.exports = { createProduct, getAllProduct, getProductsById, deleteProductById }
