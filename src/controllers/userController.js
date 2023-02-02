@@ -255,8 +255,8 @@ if(data.phone){
     );
 
     return res.status(200).send({
-      status: false,
-      message: "User profile updated",
+      status: true,
+      message: "Update user profile is successful",
       data: updateData,
     });
   } catch (err) {

@@ -7,7 +7,7 @@ const authentication = async (req, res, next) => {
             res.status(400).send({ status: false, message: "token is required" })
         }
         let fetchToken =  token.split(" ")[1]
-        jwt.verify(fetchToken, "shopping-cart-group8", function (err, data) {
+        jwt.verify(fetchToken, "group8", function (err, data) {
             if (err) {
                 res.status(401).send({ status: false, message: "invalid token" })
             } else {

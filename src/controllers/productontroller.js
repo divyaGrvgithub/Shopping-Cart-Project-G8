@@ -43,7 +43,7 @@ const createProduct = async (req, res) => {
 
     return res
       .status(201)
-      .send({ status: true, message: "success", data: createProduct });
+      .send({ status: true, message: "Success", data: createProduct });
   } catch (err) {
     console.log(err.message)
     return res.status(500).send({ status: false, message: err.message });

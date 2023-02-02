@@ -6,8 +6,8 @@ const {authentication}= require("../middleware/auth.js")
 
 router.post("/register",userCreate)
 router.post("/login",login)
-router.get("/user/:userId/profile",getUserProfile)
-router.put("/user/:userId/profile",updateUser)
+router.get("/user/:userId/profile",authentication,getUserProfile)
+router.put("/user/:userId/profile",authentication,updateUser)
 // ****************************************ProductCreate*********************
 router.post('/products',createProduct)
 router.delete('/products/:productId',deleteProduct)
