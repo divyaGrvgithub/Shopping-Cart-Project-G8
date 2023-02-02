@@ -75,31 +75,63 @@ const userlogin = joi.object({
     .message("please enter valid password"),
 });
 
-
 const updateUserJoi = joi.object({
-    fname:joi.string().optional().regex(/^[a-zA-Z. ]+$/).message("please enter valid fname"),
+  fname: joi
+    .string()
+    .optional()
+    .regex(/^[a-zA-Z. ]+$/)
+    .message("please enter valid fname"),
 
-    lname:joi.string().optional().regex(/^[a-zA-Z. ]+$/).message("please enter valid lname"),
+  lname: joi
+    .string()
+    .optional()
+    .regex(/^[a-zA-Z. ]+$/)
+    .message("please enter valid lname"),
 
-    email:joi.string().optional().regex(/^[A-Za-z0-9._]{3,}@[A-Za-z]{3,}[.]{1,}[A-Za-z.]{2,8}$/).
-    message("please enter valid email"),
+  email: joi
+    .string()
+    .optional()
+    .regex(/^[A-Za-z0-9._]{3,}@[A-Za-z]{3,}[.]{1,}[A-Za-z.]{2,8}$/)
+    .message("please enter valid email"),
 
-    phone:joi.string().optional().regex(/^[5-9]{1}[0-9]{9}$/).message("please enter valid mobile number"),
+  phone: joi
+    .string()
+    .optional()
+    .regex(/^[5-9]{1}[0-9]{9}$/)
+    .message("please enter valid mobile number"),
 
-    password:joi.string().optional().regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z@#$&\d]{8,15}$/).message("please enter valid password"),
+  password: joi
+    .string()
+    .optional()
+    .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z@#$&\d]{8,15}$/)
+    .message("please enter valid password"),
 
-    address:joi.object({
-        shipping:joi.object({
-            street:joi.string().optional(),
-            city:joi.string().optional(),
-            pincode:joi.number().strict().optional()
-        }),
+  address: joi.object({
+    shipping: joi.object({
+      street: joi.string().optional(),
+      city: joi.string().optional(),
+      pincode: joi.number().strict().optional(),
+    }),
 
-        billing:joi.object({
-            street:joi.string().optional(),
-            city:joi.string().optional(),
-            pincode:joi.number().strict().optional()
-        })
-    })
-})
-module.exports = { userlogin, userJoi, updateUserJoi };
+    billing: joi.object({
+      street: joi.string().optional(),
+      city: joi.string().optional(),
+      pincode: joi.number().strict().optional(),
+    }),
+  }),
+});
+
+const createProductJoi = joi.object({
+  title: joi.string().required(),
+  description:joi.string().required(),
+  price:joi.number().required(),
+  currencyId:joi.string().required().valid("INR"),
+  currencyFormat: joi.string().valid("₹"),
+  isFreeShipping: joi.boolean().optional(),
+  style:joi.string().optional(),
+  availableSizes:joi.string().valid("S", "XS","M","X", "L","XXL", "XL").optional(),
+  installments: joi.number().optional(),
+  deletedAt: joi.date(), 
+  isDeleted: joi.boolean(),
+});
+module.exports = { userlogin, userJoi, updateUserJoi, createProductJoi };
