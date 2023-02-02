@@ -1,33 +1,105 @@
-
-const joi = require('joi')
+const joi = require("joi");
 
 const userJoi = joi.object({
-    fname:joi.string().trim().required().regex(/^[a-zA-Z ]+$/).message("please enter valid first name"),
-    lname:joi.string().trim().required().regex(/^[a-zA-Z ]+$/).message("please enter valid first name"),
-    email:joi.string().trim().required().regex(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).message("please enter valid email"),
-    profileImage:joi.string().trim(),
-    phone:joi.string().trim().required().regex(/^[0]?[6789]\d{9}$/).message("phone is not valid"),
-    password:joi.string().trim().required().min(8).max(15).regex(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,15}$/).message("password  should contain Min 8 character and 1 Special Symbol"),
+  fname: joi
+    .string()
+    .trim()
+    .required()
+    .regex(/^[a-zA-Z.]+$/)
+    .message("please enter valid first name"),
+  lname: joi
+    .string()
+    .trim()
+    .required()
+    .regex(/^[a-zA-Z.]+$/)
+    .message("please enter valid first name"),
+  email: joi
+    .string()
+    .trim()
+    .required()
+    .regex(/^[A-Za-z0-9._]{3,}@[A-Za-z]{3,}[.]{1,}[A-Za-z.]{2,8}$/)
+    .message("please enter valid email"),
+  profileImage: joi.string().trim(),
+  phone: joi
+    .string()
+    .trim()
+    .required()
+    .regex(/^[0]?[6789]\d{9}$/)
+    .message("phone is not valid"),
+  password: joi
+    .string()
+    .trim()
+    .required()
+    .min(8)
+    .max(15)
+    .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z@#$&\d]{8,15}$/)
+    .message("password  should contain Min 8 character"),
+  address: joi.object({
+    shipping: joi.object({
+      street: joi.string().required(),
+      city: joi
+        .string()
+        .required()
+        .trim()
+        .regex(/^[a-zA-Z.]+$/)
+        .message("please enter valid city name"),
+      pincode: joi.number().strict().required(),
+    }),
+    billing: joi.object({
+      street: joi.string().required(),
+      city: joi
+        .string()
+        .required()
+        .trim()
+        .regex(/^[a-zA-Z.]+$/)
+        .message("please enter valid city name"),
+      pincode: joi.number().strict().required(),
+    }),
+  }),
+});
+
+const userlogin = joi.object({
+  email: joi
+    .string()
+    .required()
+    .trim()
+    .regex(/^[A-Za-z0-9._]{3,}@[A-Za-z]{3,}[.]{1,}[A-Za-z.]{2,8}$/)
+    .message("please enter valid email"),
+  password: joi
+    .string()
+    .trim()
+    .required()
+    .min(8)
+    .max(15)
+    .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z@#$&\d]{8,15}$/)
+    .message("please enter valid password"),
+});
+
+
+const updateUserJoi = joi.object({
+    fname:joi.string().optional().regex(/^[a-zA-Z. ]+$/).message("please enter valid fname"),
+
+    lname:joi.string().optional().regex(/^[a-zA-Z. ]+$/).message("please enter valid lname"),
+
+    email:joi.string().optional().regex(/^[A-Za-z0-9._]{3,}@[A-Za-z]{3,}[.]{1,}[A-Za-z.]{2,8}$/).
+    message("please enter valid email"),
+
+    phone:joi.string().optional().regex(/^[5-9]{1}[0-9]{9}$/).message("please enter valid mobile number"),
+
+    password:joi.string().optional().regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z@#$&\d]{8,15}$/).message("please enter valid password"),
+
     address:joi.object({
-        "shipping":joi.object({
-            street:joi.string().required(),
-            city:joi.string().required().trim().regex(/^[a-zA-Z ]+$/).message("please enter valid city name"),
-            pincode:joi.string().required().trim().regex(/^([0-9]{4}|[0-9]{6})$/).message("please enter valid pin")
+        shipping:joi.object({
+            street:joi.string().optional(),
+            city:joi.string().optional(),
+            pincode:joi.number().strict().optional()
         }),
-        "billing":joi.object({
-            street:joi.string().required(),
-            city:joi.string().required().trim().regex(/^[a-zA-Z ]+$/).message("please enter valid city name"),
-            pincode:joi.string().trim().required().regex(/^([0-9]{4}|[0-9]{6})$/).message("please enter valid PIN")
+
+        billing:joi.object({
+            street:joi.string().optional(),
+            city:joi.string().optional(),
+            pincode:joi.number().strict().optional()
         })
     })
 })
-
-const userlogin = joi.object({
-    email:joi.string().required().trim().regex(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/).message("please enter valid email"),
-    password:joi.string().trim().required().min(8).max(15).regex(/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,15}$/).message("please enter valid password")
-})
-
-
-
-
-module.exports = {userlogin,userJoi}
+module.exports = { userlogin, userJoi, updateUserJoi };
