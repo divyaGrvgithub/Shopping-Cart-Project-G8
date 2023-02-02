@@ -6,7 +6,7 @@ const { createProductJoi, isValidSize, isValidObjectId } = require('../validatio
 
 const createProduct = async (req, res) => {
     try {
-        let data = req.body              //check for data type
+        let data = req.body
         //validation
         try {
             await createProductJoi.validateAsync(data)
@@ -39,6 +39,8 @@ const createProduct = async (req, res) => {
         return res.status(500).send({ status: false, message: err.message })
     }
 }
+
+// **********************************************Get All PRODUCT******************************
 
 const getAllProduct = async (req, res) => {
     try {
@@ -79,19 +81,17 @@ const getAllProduct = async (req, res) => {
             }
 
         }
-
         const allProducts = await productModel.find(finalFilters).select({ _id: 0, __v: 0 }).sort({ price: 1 })
-
         if (allProducts.length == 0) return res.status(404).send({ status: false, message: "Product not Found" })
-
         return res.status(200).send({ status: true, message: "Success", data: allProducts })
     }
-
     catch (err) {
         console.log(err)
         return res.status(500).send({ status: false, message: err.message })
     }
 }
+
+// **********************************************Get Poduct ById******************************
 
 let getProductsById = async (req, res) => {
     try {
@@ -107,6 +107,8 @@ let getProductsById = async (req, res) => {
         return res.status(500).send({ error: error.message })
     }
 }
+
+// **********************************************Delete Product BYID******************************
 
 let deleteProductById = async (req, res) => {
     try {

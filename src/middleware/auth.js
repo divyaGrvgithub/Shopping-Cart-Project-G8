@@ -3,6 +3,8 @@ const UserModel = require("../models/userModel")
 const { isValidObjectId } = require("../validation/validator")
 const mongoose = require("mongoose")
 
+// **********************************AUTHENTICATION******************************
+
 const authentication = async (req, res, next) => {
     try {
         const Bearer = req.headers ["authorization"]
@@ -33,6 +35,8 @@ const authentication = async (req, res, next) => {
         return res.status(500).send({status:false,message:error.message})
     }
 }
+
+// **********************************AUTHORIZATION******************************
 
 const authorization = async (req,res,next)=>{
     try{

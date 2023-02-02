@@ -1,6 +1,7 @@
 const joi = require("joi");
 const mongoose = require("mongoose")
 
+// **********************************CreateUser Validation******************************
 const userJoi = joi.object({
   fname: joi
     .string()
@@ -59,6 +60,8 @@ const userJoi = joi.object({
   }),
 });
 
+// **********************************User Login Validation******************************
+
 const userlogin = joi.object({
   email: joi
     .string()
@@ -76,6 +79,7 @@ const userlogin = joi.object({
     .message("please enter valid password"),
 });
 
+// **********************************Update User Validation******************************
 
 const updateUserJoi = joi.object({
     fname:joi.string().optional().regex(/^[a-zA-Z. ]+$/).message("please enter valid fname"),
@@ -104,17 +108,23 @@ const updateUserJoi = joi.object({
     })
 })
 
+// **********************************Pincode Validation******************************
+
 const isValidPinCode = (value) => {
   const regEx = /^\s*([0-9]){6}\s*$/;
   const result = regEx.test(value);
   return result;
 };
 
+// **********************************ObjectId Validation******************************
+
 const isValidObjectId = function (objectId) {
   var valid = mongoose.Types.ObjectId.isValid(objectId)
   if (!valid) { return false }
   else { return true }
 }
+
+// **********************************Create Product Validation******************************
 
 const createProductJoi = joi.object({
   title: joi.string().required(),
@@ -130,6 +140,8 @@ const createProductJoi = joi.object({
   isDeleted: joi.boolean(),
 });
 
+// **********************************Valid Size Validation******************************
+
 const isValidSize = function (value) {
   let enumValue = ["S", "XS", "M", "X", "L", "XXL", "XL"]
   for (let x of value) {
@@ -137,8 +149,5 @@ const isValidSize = function (value) {
   }
   return true;
 }
-
-
-
 
 module.exports = { userlogin, userJoi, updateUserJoi,isValidObjectId,createProductJoi ,isValidPinCode,isValidSize,isValidObjectId};
