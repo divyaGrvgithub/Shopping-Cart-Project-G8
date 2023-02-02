@@ -5,7 +5,7 @@ const middleware = require("../middleware/auth.js")
 
 router.post("/register",UserController.createUser)
 router.post("/login",UserController.login)
-router.get("/user/:userId/profile",UserController.getUserProfile)
+router.get("/user/:userId/profile",middleware.authentication,UserController.getUserProfile)
 
 router.all("/*", async function (req, res) {
     return res.status(400).send({ status: false, message: "Path is not valid" });
