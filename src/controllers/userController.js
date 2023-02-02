@@ -3,9 +3,10 @@ const {
   userlogin,
   userJoi,
   updateUserJoi,
+  isValidPinCode,
 } = require("../validation/validator");
 const jwt = require("jsonwebtoken");
-const PIN = require("pincode-validator");
+// const PIN = require("pincode-validator");
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const uploadFile = require("../router/aws");
@@ -23,7 +24,7 @@ const userCreate = async (req, res) => {
     data.address = address;
     let pincodeShipping = data.address.shipping.pincode;
     let pincodeBilling = data.address.billing.pincode;
-    if (!PIN.validate(pincodeShipping) || !PIN.validate(pincodeBilling))
+    if (!isValidPinCode(pincodeShipping) || !isValidPinCode(pincodeBilling))
       return res.status(400).send({
         status: false,
         message:
@@ -135,101 +136,86 @@ const getUserProfile = async (req, res) => {
 // ************************************************************UPDATE USER PROFILE********************************************
 const updateUser = async (req, res) => {
   try {
-    let Userid = req.params.userId;
+    let userId = req.params.userId;
     let data = req.body;
-    const files = req.files
-    if(data.address){
-    let address = JSON.parse(data.address)
-    data.address = address}
+    const files = req.files;
+    let fileUrl;
+    if (files) {
+      if (files && files.length > 0) {
+        const uploadedFileURL = await uploadFile(files[0]);
+        fileUrl = uploadedFileURL;
+      }
+    }
+    data.profileImage = fileUrl;
+    if (Object.keys(data).length == 0) {
+      return res
+        .status(400)
+        .send({ status: false, message: "Please Enter data to update" });
+    }
+    if (data.address) {
+      data.address = JSON.parse(data.address);
+
+      if (data.address.shipping) {
+        if (data.address.shipping.pincode) {
+          if (!isValidPinCode(data.address.shipping.pincode))
+            return res.status(400).send({
+              status: false,
+              message: "pin code in shipping address is not valid",
+            });
+        }
+      }
+      if (data.address.billing) {
+        if (data.address.billing.pincode) {
+          if (!isValidPinCode(data.address.billing.pincode))
+            return res.status(400).send({
+              status: false,
+              message: "pin code in billing address is not valid",
+            });
+        }
+      }
+    }
+    //joi validation
     try {
       await updateUserJoi.validateAsync(data);
     } catch (err) {
       return res.status(400).send({ msg: err.message });
     }
-    let userData = await userModel.findOne({_id:Userid}).select({_id:0,updatedAt:0,createdAt:0,__v:0}).lean()
-    if(data.fname){
-      userData.fname= data.fname
-    }
-    if(data.lname){
-      userData.lname = data.lname
-    }
-    if(data.password){
-      const salt = bcrypt.genSaltSync(10);
-    const codePass = bcrypt.hashSync(data.password, salt);
-    data.password = codePass;
-    }
-    if(data.address){
-      if(data.address.billing){
-        if(data.address.billing.city){
-          userData.address.billing.city == data.address.billing.city
-        }
+    //unique email and phone
+    if (data.email || data.phone) {
+      const existingData = await userModel.findOne({
+        $or: [{ email: data.email }, { phone: data.phone }],
+      });
+      if (existingData) {
+        if (existingData.email == data.email.trim())
+          return res
+            .status(400)
+            .send({ status: false, message: "update email should be new " });
+        if (existingData.phone == data.phone.trim())
+          return res
+            .status(400)
+            .send({ status: false, message: "update phone should be new" });
       }
     }
-    if(data.address){
-      if(data.address.billing){
-        if(data.address.billing.street){
-          userData.address.billing.street = data.address.billing.street
-        }
-      }
-    }
-    if(data.address){
-      if(data.address.billing){
-        if(data.address.billing.pincode){
-          if(!PIN.validate(data.address.billing.pincode)) return res.status(400).send({status:false,message:"please enter valid PIN"})
-          userData.address.billing.pincode == data.address.billing.pincode
-        }
-      }
-    }
-    if(data.address){
-      if(data.address.shipping){
-        if(data.address.shipping.city){
-          userData.address.shipping.city == data.address.shipping.city
-        }
-      }
-    }
-    if(data.address){
-      if(data.address.shipping){
-        if(data.address.shipping.street){
-          userData.address.shipping.street = data.address.shipping.street
-        }
-      }
-    }
-    if(data.address){
-      if(data.address.shipping){
-        if(data.address.shipping.pincode){
-          if(!PIN.validate(data.address.shipping.pincode)) return res.status(400).send({status:false,message:"please enter valid PIN"})
-          userData.address.shipping.pincode == data.address.shipping.pincode
-        }
-      }
-    }
-     if(data.email){
-      let checkEmail = await userModel.findOne({$and:[{email:data.email,_id:{$ne:Userid}}]})
-      if(checkEmail) {return res.status(400).send({status:false,message:`this email ${data.email} is already in use`})}
-      userData.email = data.email
-     }
-     if(data.phone){
-      let checkPhone = await userModel.findOne({$and:[{phone:data.phone,_id:{$ne:Userid}}]})
-      if(checkPhone) {return res.status(400).send({status:false,message:`this phone ${data.phone} is already in use`})}
-      else
-      { userData.phone == data.phone }
-      
-     }
-     if (files && files.length > 0) {
-      let formate = files[0].originalname
-      if (!(/\.(jpe?g|png|bmp)$/i.test(formate))) return res.status(400).send({ status: false, message: "file must be an image(jpg,png,jpeg)" })
-      let uploadedFileURL = await uploadFile(files[0])
-      userData.profileImage = uploadedFileURL
-  }
 
-    const updatedData = await userModel.findByIdAndUpdate(
-      Userid,
-      { $set: userData },
+    //password hashed
+    if (data.password) {
+      const salt = bcrypt.genSaltSync(10);
+      const codePass = bcrypt.hashSync(data.password, salt);
+      data.password = codePass;
+    }
+    
+
+    //updation of data
+    const updateData = await userModel.findByIdAndUpdate(
+      userId,
+      { $set: data },
       { new: true }
     );
+
     return res.status(200).send({
-      status: true,
+      status: false,
       message: "User profile updated",
-      data: updatedData,
+      data: updateData,
     });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });

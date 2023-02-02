@@ -26,34 +26,17 @@ const userJoi = joi.object({
     .required()
     .regex(/^[0]?[6789]\d{9}$/)
     .message("phone is not valid"),
-  password: joi
-    .string()
-    .trim()
-    .required()
-    .min(8)
-    .max(15)
-    .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z@#$&\d]{8,15}$/)
-    .message("password  should contain Min 8 character"),
+  password: joi.string().required().min(8).max(15),
   address: joi.object({
     shipping: joi.object({
       street: joi.string().required(),
-      city: joi
-        .string()
-        .required()
-        .trim()
-        .regex(/^[a-zA-Z.]+$/)
-        .message("please enter valid city name"),
-      pincode: joi.number().strict().required(),
+      city: joi.string().required(),
+      pincode: joi.number().required(),
     }),
     billing: joi.object({
       street: joi.string().required(),
-      city: joi
-        .string()
-        .required()
-        .trim()
-        .regex(/^[a-zA-Z.]+$/)
-        .message("please enter valid city name"),
-      pincode: joi.number().strict().required(),
+      city: joi.string().required(),
+      pincode: joi.number().required(),
     }),
   }),
 });
@@ -65,14 +48,7 @@ const userlogin = joi.object({
     .trim()
     .regex(/^[A-Za-z0-9._]{3,}@[A-Za-z]{3,}[.]{1,}[A-Za-z.]{2,8}$/)
     .message("please enter valid email"),
-  password: joi
-    .string()
-    .trim()
-    .required()
-    .min(8)
-    .max(15)
-    .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z@#$&\d]{8,15}$/)
-    .message("please enter valid password"),
+  password: joi.string().required().min(8).max(15),
 });
 
 const updateUserJoi = joi.object({
@@ -93,45 +69,54 @@ const updateUserJoi = joi.object({
     .optional()
     .regex(/^[A-Za-z0-9._]{3,}@[A-Za-z]{3,}[.]{1,}[A-Za-z.]{2,8}$/)
     .message("please enter valid email"),
-
+  profileImage: joi.string().trim(),
   phone: joi
     .string()
     .optional()
     .regex(/^[5-9]{1}[0-9]{9}$/)
     .message("please enter valid mobile number"),
 
-  password: joi
-    .string()
-    .optional()
-    .regex(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z@#$&\d]{8,15}$/)
-    .message("please enter valid password"),
+  password: joi.string().min(8).max(15),
 
   address: joi.object({
     shipping: joi.object({
       street: joi.string().optional(),
       city: joi.string().optional(),
-      pincode: joi.number().strict().optional(),
+      pincode: joi.number().optional(),
     }),
 
     billing: joi.object({
       street: joi.string().optional(),
       city: joi.string().optional(),
-      pincode: joi.number().strict().optional(),
+      pincode: joi.number().optional(),
     }),
   }),
 });
-
+const isValidPinCode = (value) => {
+  const regEx = /^\s*([0-9]){6}\s*$/;
+  const result = regEx.test(value);
+  return result;
+};
 const createProductJoi = joi.object({
   title: joi.string().required(),
-  description:joi.string().required(),
-  price:joi.number().required(),
-  currencyId:joi.string().required().valid("INR"),
+  description: joi.string().required(),
+  price: joi.number().required(),
+  currencyId: joi.string().required().valid("INR"),
   currencyFormat: joi.string().valid("₹"),
   isFreeShipping: joi.boolean().optional(),
-  style:joi.string().optional(),
-  availableSizes:joi.string().valid("S", "XS","M","X", "L","XXL", "XL").optional(),
+  style: joi.string().optional(),
+  availableSizes: joi
+    .string()
+    .valid("S", "XS", "M", "X", "L", "XXL", "XL")
+    .optional(),
   installments: joi.number().optional(),
-  deletedAt: joi.date(), 
+  deletedAt: joi.date(),
   isDeleted: joi.boolean(),
 });
-module.exports = { userlogin, userJoi, updateUserJoi, createProductJoi };
+module.exports = {
+  userlogin,
+  userJoi,
+  isValidPinCode,
+  updateUserJoi,
+  createProductJoi,
+};
