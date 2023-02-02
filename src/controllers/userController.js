@@ -146,7 +146,7 @@ const updateUser = async (req, res) => {
         } catch (err) {
             return res.status(400).send({ msg: err.message });
         }
-        let userdata = await userModel.findOne({ _id: userId }).select({ _id: 0, updatedAt: 0, createdAt: 0, __v: 0 }).lean()
+        let userdata = await UserModel.findOne({ _id: userId }).select({ _id: 0, updatedAt: 0, createdAt: 0, __v: 0 }).lean()
         if (fileUrl) {
             userdata.profileImage = fileUrl
         }
@@ -208,7 +208,7 @@ const updateUser = async (req, res) => {
             }
         }
         if (data.email) {
-            let checkEmail = await userModel.findOne({ email: data.email })
+            let checkEmail = await UserModel.findOne({ email: data.email })
             if (checkEmail) {
                 if (checkEmail.email == data.email) return res.status(400).send({ status: false, message: `this mail [${data.email}] is already in use` })
             }
@@ -217,7 +217,7 @@ const updateUser = async (req, res) => {
             }
         }
         if (data.phone) {
-            let checkPhone = await userModel.findOne({ phone: data.phone })
+            let checkPhone = await UserModel.findOne({ phone: data.phone })
             if (checkPhone) {
                 if (checkPhone.phone == data.phone) return res.status(400).send({ status: false, message: `this Phone number-( ${data.phone} )is already in use` })
             }
@@ -232,7 +232,7 @@ const updateUser = async (req, res) => {
             data.password = codePass;
         }
         //updation of data
-        const updateData = await userModel.findByIdAndUpdate(
+        const updateData = await UserModel.findByIdAndUpdate(
             userId,
             { $set: userdata },
             { new: true }
