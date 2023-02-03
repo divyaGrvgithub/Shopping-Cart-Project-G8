@@ -146,7 +146,7 @@ const updateUser = async (req, res) => {
         fileUrl = uploadedFileURL;
       }
     
-    data.profileImage = fileUrl;
+    // data.profileImage = fileUrl;
     if (Object.keys(data).length == 0) {
       return res
         .status(400)

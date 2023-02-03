@@ -105,10 +105,7 @@ const createProductJoi = joi.object({
   currencyFormat: joi.string().valid("₹"),
   isFreeShipping: joi.boolean().optional(),
   style: joi.string().optional(),
-  availableSizes: joi
-    .string()
-    .valid("S", "XS", "M", "X", "L", "XXL", "XL")
-    .optional(),
+  availableSizes: joi.string().optional(),
   installments: joi.number().optional(),
   deletedAt: joi.date(),
   isDeleted: joi.boolean(),
