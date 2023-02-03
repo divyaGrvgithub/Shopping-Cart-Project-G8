@@ -73,14 +73,15 @@ const createProduct = async (req, res) => {
 const getAllProduct = async (req,res)=>{
   try{
   let data = req.query
-  let { size, name, priceGreaterThan, priceLessThan, priceSort,...rest} = data
-
+  
+  let { size,name, priceGreaterThan, priceLessThan, priceSort,...rest} = data
+  let reqSize = size.toUpperCase()
   if(Object.keys(rest).length > 0) return res.status(400).send({status: false, message: "You can filter only by size, name, priceGreaterThan, priceLessThan, priceSort "})
 
   let filter = {isDeleted:false}
 
-  if(size){
-         size=size.split(",");
+  if(reqSize){
+         size=reqSize.split(",");
           filter.availableSizes = {$in:size} ///check whether it will apply on product creation time
 
   }
