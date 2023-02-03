@@ -95,13 +95,25 @@ const getAllProduct = async (req,res)=>{
   if(priceLessThan){
       filter.price = {$lt:priceLessThan}
   }
+  if (priceSort) {
+    if (!(priceSort == "1" || priceSort == "-1")) return res.status(400).send({
+        status: false, message: "value priceSort can either be 1 or -1"
+    })
 
-  let sortProduct
-  if(priceSort){
-      sortProduct = {price: priceSort}
-  }
+    if (priceSort == "1") {
+        const allProducts = await productModel.find(filter).sort({ price: 1 })
+        if (allProducts.length == 0) return res.status(404).send({ status: false, message: "No Product Found" })
+        return res.status(200).send({ status: true, message: "Success", data: allProducts })
+    }
+    else if (priceSort == "-1") {
+        const allProducts = await productModel.find(filter).sort({ price: -1 })
+        if (allProducts.length == 0) return res.status(404).send({ status: false, message: "Product not Found" })
+        return res.status(200).send({ status: true, message: "Success", data: allProducts })
+    }
 
-  let getData= await productModel.find(filter).sort(sortProduct)
+}
+
+  let getData= await productModel.find(filter).select({ _id: 0, __v: 0 }).sort({ price: 1 })
 
   res.status(200).send({status:true, message:"Success", data: getData })
   }
