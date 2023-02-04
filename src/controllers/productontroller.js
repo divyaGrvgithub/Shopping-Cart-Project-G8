@@ -58,7 +58,6 @@ const createProduct = async (req, res) => {
     //data creation
     const createProduct = await productModel.create(data);
 
-    delete createProduct["__V"];
 
     return res
       .status(201)
@@ -75,13 +74,13 @@ const getAllProduct = async (req,res)=>{
   let data = req.query
   
   let { size,name, priceGreaterThan, priceLessThan, priceSort,...rest} = data
-  let reqSize = size.toUpperCase()
+  
   if(Object.keys(rest).length > 0) return res.status(400).send({status: false, message: "You can filter only by size, name, priceGreaterThan, priceLessThan, priceSort "})
 
   let filter = {isDeleted:false}
-
-  if(reqSize){
-         size=reqSize.split(",");
+ 
+  if(size){
+         size=size.toUpperCase().split(",");
           filter.availableSizes = {$in:size} ///check whether it will apply on product creation time
 
   }
@@ -96,26 +95,27 @@ const getAllProduct = async (req,res)=>{
   if(priceLessThan){
       filter.price = {$lt:priceLessThan}
   }
-  if (priceSort) {
-    if (!(priceSort == "1" || priceSort == "-1")) return res.status(400).send({
-        status: false, message: "value priceSort can either be 1 or -1"
-    })
+//   if (priceSort) {
+//     if (!(priceSort == "1" || priceSort == "-1")) return res.status(400).send({
+//         status: false, message: "value priceSort can either be 1 or -1"
+//     })
 
-    if (priceSort == "1") {
-        const allProducts = await productModel.find(filter).sort({ price: 1 })
-        if (allProducts.length == 0) return res.status(404).send({ status: false, message: "No Product Found" })
-        return res.status(200).send({ status: true, message: "Success", data: allProducts })
-    }
-    else if (priceSort == "-1") {
-        const allProducts = await productModel.find(filter).sort({ price: -1 })
-        if (allProducts.length == 0) return res.status(404).send({ status: false, message: "Product not Found" })
-        return res.status(200).send({ status: true, message: "Success", data: allProducts })
-    }
+//     if (priceSort = "1") {
+//         const allProducts = await productModel.find(filter).sort({ price: 1 })
+//         if (allProducts.length == 0) return res.status(404).send({ status: false, message: "No Product Found" })
+//         return res.status(200).send({ status: true, message: "Success", data: allProducts })
+//     }
+//     else if (priceSort == "-1") {
+//         const allProducts = await productModel.find(filter).sort({ price: -1 })
+//         if (allProducts.length == 0) return res.status(404).send({ status: false, message: "Product not Found" })
+//         return res.status(200).send({ status: true, message: "Success", data: allProducts })
+//     }
 
-}
+// }
 
   let getData= await productModel.find(filter).select({ _id: 0, __v: 0 }).sort({ price: 1 })
-
+  console.log(getData)
+if(getData.length == 0) return res.status(404).send({ status: false, message: "Product not Found" })
   res.status(200).send({status:true, message:"Success", data: getData })
   }
   catch(err){
@@ -133,6 +133,13 @@ let getProductsById = async (req, res) => {
       if (!mongoose.Types.ObjectId.isValid(productId)) return res.status(400).send({ status: false, message: "Invalid ObjectId" })
 
       const products = await productModel.findById({ _id: productId, isDeleted: false })
+      if (!products)
+      return res
+        .status(404)
+        .send({
+          status: true,
+          message: "This product is deleted or not found",
+        });
       return res.status(200).send({ status: true, message: "Success", data: products })
 
   } catch (error) {
