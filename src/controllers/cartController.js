@@ -141,7 +141,7 @@ const updateCart = async (req, res) => {
         .status(400)
         .send({ status: false, message: "This is invalid Prodict Id" });
 
-    if (removeProduct != 0 && removeProduct != 1)
+    if (removeProduct===undefined)
       return res
         .status(400)
         .send({ status: false, message: "please enter remove Product first" });
@@ -151,49 +151,65 @@ const updateCart = async (req, res) => {
       return res
         .status(400)
         .send({ status: false, message: "no cart present" });
-
+// console.log((getCart.items));
     let removeItem;
     let items = getCart.items;
-    for (let item of items) {
-      if (item.productId == productId) {
-        if (removeProduct == 0) {
+    for (let item in items) {
+      
+      if (items[item].productId.toString() == productId.toString()) {
+        // console.log(removeProduct)
+        if (removeProduct === 0) {
+                // console.log("hi",item)
           removeItem = items.splice(item, 1);
+          console.log(items);
           break;
         }
-        if (removeProduct == 1 && item.quantity > 1) {
-          item.quantity = -1;
-          removeItem = item;
+        if (removeProduct == 1 && items[item].quantity >= 1) {
+          if(items[item].quantity ==1){
+            removeItem = items.splice(item, 1);
+            break;
+          }
+          items[item].quantity -= 1;
+          removeItem = items[item];
+          // console.log(removeItem);
           break;
         }
       }
     }
-    console.log("hii")
-    if (!removeItem)
+    // console.log(removeItem)
+    let pId 
+    if(Array.isArray(removeItem)){
+      pId=removeItem[0]?.productId
+      Q=removeItem[0]?.quantity
+    }else{
+      pId=removeItem?.productId
+      Q=removeItem?.quantity
+    }
+    if (!pId){
       return res
         .status(400)
-        .send({ status: false, message: "no product present to remove" });
-        let idOfProduct=removeItem.productId
-    let productTORemove = await productModel.findById(idOfProduct.toString());
+        .send({ status: false, message: "no product present to remove" })};
+        
+    let productTORemove = await productModel.findById(pId);
     if (!productTORemove)
       return res
         .status(404)
         .send({ status: false, message: "Product is not found" });
-    let totalPrice = getCart.totalPrice - productTORemove.price;
+        // console.log(getCart.totalPrice)
+        // console.log(productTORemove.price)
+    let totalPrice = getCart.totalPrice - (productTORemove.price*Q);
+    // console.log(totalPrice);
     let totalItems = getCart.items.length;
-    let update = {
-      items: getCart.items,
-      totalPrice: totalPrice,
-      totalItems: totalItems,
-    };
-    let updateCart = await cartModel.findOneAndUpdate(
-      { _id: getCart._id },
-      { $set: { update } },
-      { new: true }
-    );
+    let updateCart = await cartModel.findOne({_id:cartId});
+    updateCart.totalPrice=totalPrice
+    updateCart.totalItems=totalItems
+    updateCart.items=items
+    await updateCart.save();
+    let nextUpdate = await cartModel.findOne({_id:cartId})
 
     return res
       .status(200)
-      .send({ status: true, mssage: "Update Cart", data: updateCart });
+      .send({ status: true, mssage: "Update Cart", data: nextUpdate });
   } catch (err) {
     res.status(500).send({ Status: false, message: err.message });
   }
