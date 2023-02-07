@@ -1,6 +1,8 @@
 const cartModel = require("../models/cartModel");
 const productModel = require("../models/productModel");
 const mongoose = require("mongoose");
+
+// **********************************************Create Cart********************************************
 const createCart = async (req, res) => {
   try {
     let data = req.body;
@@ -85,7 +87,7 @@ const createCart = async (req, res) => {
     return res.status(500).send({ status: false, message: err.message });
   }
 };
-
+// *****************************************Get Cart***************************************************
 const getCart = async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -113,7 +115,7 @@ const getCart = async (req, res) => {
     res.status(500).send({ Status: false, message: err.message });
   }
 };
-
+// ******************************************Update Cart**********************************************************
 const updateCart = async (req, res) => {
   try {
     const data = req.body;
@@ -214,4 +216,23 @@ const updateCart = async (req, res) => {
     res.status(500).send({ Status: false, message: err.message });
   }
 };
-module.exports = { createCart, getCart, updateCart };
+// ****************************************************Delete Cart******************************************
+const deleteCart = async (req, res) => {
+  try {
+      let userId = req.params.userId;
+
+      let cartData = await cartModel.findOne({ userId });
+      if (!cartData) {
+          return res.status(404).send({ status: false, message: 'Cart does not exist' });
+      }
+
+      if(cartData.totalItems==0)  return res.status(404).send({ status: false, message: 'cart is already empty' });
+
+      await cartModel.findOneAndUpdate({ userId }, { items: [], totalPrice: 0, totalItems: 0 });
+    return  res.status(204).send();
+  }
+  catch (err) {
+    return  res.status(500).send({ status: false, message: err.message });
+  }
+} 
+module.exports = { createCart, getCart, updateCart,deleteCart };

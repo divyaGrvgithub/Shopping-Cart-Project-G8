@@ -3,7 +3,7 @@ const router = express.Router()
 const {userCreate,login,getUserProfile,updateUser} = require("../controllers/userController")
 const {createProduct,deleteProduct,getAllProduct,getProductsById} = require("../controllers/productontroller")
 const {authentication, authorization}= require("../middleware/auth.js")
-const {createCart,getCart,updateCart} = require("../controllers/cartController")
+const {createCart,getCart,updateCart, deleteCart} = require("../controllers/cartController")
 // ***************************************User APIs******************************
 router.post("/register",userCreate)
 router.post("/login",login)
@@ -15,9 +15,10 @@ router.get("/products",getAllProduct)
 router.get("/products/:productId",getProductsById)
 router.delete('/products/:productId',deleteProduct)
 // **********************************************Cart APIs**************************************
-router.post('/users/:userId/cart',createCart)
-router.get('/users/:userId/cart',getCart)
-router.put('/users/:userId/cart',updateCart)
+router.post('/users/:userId/cart',authentication, authorization, createCart)
+router.get('/users/:userId/cart',authentication, authorization, getCart)
+router.put('/users/:userId/cart',authentication, authorization, updateCart)
+router.delete('/users/:userId/cart',authentication, authorization, deleteCart)
 // **********************************************Invalid Path*******************************
 router.all("/*", async function (req, res) {
     return res.status(400).send({ status: false, message: "Page not found" });
