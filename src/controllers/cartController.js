@@ -179,7 +179,7 @@ const updateCart = async (req, res) => {
       }
     }
     // console.log(removeItem)
-    let pId 
+    let pId ,Q
     if(Array.isArray(removeItem)){
       pId=removeItem[0]?.productId
       Q=removeItem[0]?.quantity
@@ -211,7 +211,7 @@ const updateCart = async (req, res) => {
 
     return res
       .status(200)
-      .send({ status: true, mssage: "Update Cart", data: nextUpdate });
+      .send({ status: true, message: "Update Cart", data: nextUpdate });
   } catch (err) {
     res.status(500).send({ Status: false, message: err.message });
   }

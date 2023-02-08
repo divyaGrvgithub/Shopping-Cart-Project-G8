@@ -104,6 +104,7 @@ const createProductJoi = joi.object({
   currencyId: joi.string().required().valid("INR"),
   currencyFormat: joi.string().valid("₹"),
   isFreeShipping: joi.boolean().optional(),
+  productImage:joi.string().trim(),
   style: joi.string().optional(),
   availableSizes: joi.string().optional(),
   installments: joi.number().optional(),

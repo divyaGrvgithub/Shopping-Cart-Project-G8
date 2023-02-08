@@ -8,6 +8,17 @@ const createProduct = async (req, res) => {
   try {
     let data = req.body;
 
+    let files = req.files;
+    let fileUrl;
+    if (files && files.length > 0) {
+      let uploadImage = await uploadFile(files[0]);
+      fileUrl = uploadImage;
+    } else {
+      return res
+        .status(400)
+        .send({ status: false, message: "please upload image" });
+    }
+    data["productImage"] = fileUrl;
     //validation
     try {
       await createProductJoi.validateAsync(data);
@@ -43,17 +54,6 @@ const createProduct = async (req, res) => {
         message: "title already exist please enter another one",
       });
 
-    let files = req.files;
-    let fileUrl;
-    if (files && files.length > 0) {
-      let uploadImage = await uploadFile(files[0]);
-      fileUrl = uploadImage;
-    } else {
-      return res
-        .status(400)
-        .send({ status: false, message: "please upload image" });
-    }
-    data["productImage"] = fileUrl;
 
     //data creation
     const createProduct = await productModel.create(data);
@@ -100,7 +100,7 @@ const getAllProduct = async (req,res)=>{
         status: false, message: "value priceSort can either be 1 or -1"
     })
 
-    if (priceSort = "1") {
+    if (priceSort == "1") {
         const allProducts = await productModel.find(filter).sort({ price: 1 })
         if (allProducts.length == 0) return res.status(404).send({ status: false, message: "No Product Found" })
         return res.status(200).send({ status: true, message: "Success", data: allProducts })
