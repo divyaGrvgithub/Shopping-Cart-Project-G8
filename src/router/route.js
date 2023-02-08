@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const UserController = require("../controllers/userController")
 const productController = require("../controllers/productController")
+const cartController = require("../controllers/cartController")
 const middleware = require("../middleware/auth.js")
 
 // **********************************USER API ******************************
@@ -17,6 +18,13 @@ router.post("/products",productController.createProduct)
 router.get("/products",productController.getAllProduct)
 router.get("/products/:productId",productController.getProductsById)
 router.delete("/products/:productId",productController.deleteProductById)
+
+// **********************************************Cart APIs*********************
+
+router.post('/users/:userId/cart',middleware.authentication,middleware.authorization,cartController.createCart)
+router.get('/users/:userId/cart',middleware.authentication,middleware.authorization,cartController.getCart)
+router.put('/users/:userId/cart',middleware.authentication,middleware.authorization,cartController.updateCart)
+router.delete('/users/:userId/cart',middleware.authentication,middleware.authorization,cartController.deleteCart)
 
 router.all("/*", async function (req, res) {
     return res.status(400).send({ status: false, message: "Path is not valid" });
