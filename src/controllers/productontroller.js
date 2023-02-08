@@ -2,6 +2,7 @@ const productModel = require("../models/productModel");
 const uploadFile = require("../router/aws");
 const { createProductJoi } = require("../validation/validator");
 const mongoose = require("mongoose");
+
 // **********************************************CREATE PRODUCT****************************************************************
 
 const createProduct = async (req, res) => {
