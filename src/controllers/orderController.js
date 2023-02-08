@@ -2,6 +2,8 @@ const orderModel = require("../models/orderModel");
 const cartModel = require("../models/cartModel");
 const mongoose = require("mongoose");
 
+// **********************************************CREATE ORDER******************************
+
 const createOrder = async function (req, res) {
   try {
     let userId = req.params.userId;
@@ -73,6 +75,8 @@ const createOrder = async function (req, res) {
     return res.status(500).send({ status: false, error: error.message });
   }
 };
+
+// **********************************************UPDATE ORDER******************************
 
 const updateOrder = async function (req, res) {
     try {
