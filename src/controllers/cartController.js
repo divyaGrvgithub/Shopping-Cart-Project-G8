@@ -2,7 +2,7 @@ const cartModel = require("../models/cartModel");
 const productModel = require("../models/productModel");
 const mongoose = require("mongoose");
 
-// **********************************************Create Cart********************************************
+// **********************************************Create Cart******************************************************
 const createCart = async (req, res) => {
   try {
     let data = req.body;
