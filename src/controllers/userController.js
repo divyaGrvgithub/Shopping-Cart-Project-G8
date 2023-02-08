@@ -22,6 +22,17 @@ const userCreate = async (req, res) => {
     }
     let address = JSON.parse(data.address);
     data.address = address;
+    if (files && files.length > 0) {
+      let uploadedFileURL = await uploadFile(files[0]);
+      data.profileImage = uploadedFileURL;
+    } else {
+      return res.status(400).send({ msg: "No file found" });
+    }
+    try {
+      await userJoi.validateAsync(data);
+    } catch (err) {
+      return res.status(400).send({ msg: err.message });
+    }
     let pincodeShipping = data.address.shipping.pincode;
     let pincodeBilling = data.address.billing.pincode;
     if (!isValidPinCode(pincodeShipping) || !isValidPinCode(pincodeBilling))
@@ -30,11 +41,6 @@ const userCreate = async (req, res) => {
         message:
           "pin code in shipping address or billing address  is not valid",
       });
-    try {
-      await userJoi.validateAsync(data);
-    } catch (err) {
-      return res.status(400).send({ msg: err.message });
-    }
     let existUser = await userModel.findOne({
       $or: [{ email: data.email }, { phone: data.phone }],
     });
@@ -51,12 +57,7 @@ const userCreate = async (req, res) => {
         });
       }
     }
-    if (files && files.length > 0) {
-      let uploadedFileURL = await uploadFile(files[0]);
-      data.profileImage = uploadedFileURL;
-    } else {
-      return res.status(400).send({ msg: "No file found" });
-    }
+   
 
     const salt = bcrypt.genSaltSync(10);
     const codePass = bcrypt.hashSync(data.password, salt);
@@ -86,12 +87,12 @@ const login = async (req, res) => {
     try {
       await userlogin.validateAsync(data);
     } catch (error) {
-      return res.status(400).send({ message: error.message });
+      return res.status(400).send({status:false, message: error.message });
     }
     let findeUser = await userModel.findOne({ email: email.trim() });
     if (!findeUser)
       return res
-        .status(404)
+        .status(400)
         .send({ status: false, message: "Credentials do not match" });
 
     let codePass = findeUser.password;
