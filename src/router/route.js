@@ -26,6 +26,12 @@ router.get('/users/:userId/cart',Middleware.authentication,Middleware.authorizat
 router.put('/users/:userId/cart',Middleware.authentication,Middleware.authorization,CartController.updateCart)
 router.delete('/users/:userId/cart',Middleware.authentication,Middleware.authorization,CartController.deleteCart)
 
+// ***************************************Create Order**************************************
+
+router.post("/users/:userId/orders",createOrder)
+
+// **********************************************Invalid Path*******************************
+
 router.all("/*", async function (req, res) {
     return res.status(400).send({ status: false, message: "Path is not valid" });
 });
