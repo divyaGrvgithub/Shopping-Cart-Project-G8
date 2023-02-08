@@ -1,8 +1,8 @@
 const express = require("express")
 const router = express.Router()
 const UserController = require("../controllers/userController")
-const productController = require("../controllers/productController")
-const cartController = require("../controllers/cartController")
+const ProductController = require("../controllers/productController")
+const CartController = require("../controllers/cartController")
 const middleware = require("../middleware/auth.js")
 
 // **********************************USER API ******************************
@@ -14,17 +14,17 @@ router.put("/user/:userId/profile",middleware.authentication,middleware.authoriz
 
 // **********************************PRODUCT API******************************
 
-router.post("/products",productController.createProduct)
-router.get("/products",productController.getAllProduct)
-router.get("/products/:productId",productController.getProductsById)
-router.delete("/products/:productId",productController.deleteProductById)
+router.post("/products",ProductController.createProduct)
+router.get("/products",ProductController.getAllProduct)
+router.get("/products/:productId",ProductController.getProductsById)
+router.delete("/products/:productId",ProductController.deleteProductById)
 
 // **********************************************Cart APIs*********************
 
-router.post('/users/:userId/cart',middleware.authentication,middleware.authorization,cartController.createCart)
-router.get('/users/:userId/cart',middleware.authentication,middleware.authorization,cartController.getCart)
-router.put('/users/:userId/cart',middleware.authentication,middleware.authorization,cartController.updateCart)
-router.delete('/users/:userId/cart',middleware.authentication,middleware.authorization,cartController.deleteCart)
+router.post('/users/:userId/cart',middleware.authentication,middleware.authorization,CartController.createCart)
+router.get('/users/:userId/cart',middleware.authentication,middleware.authorization,CartController.getCart)
+router.put('/users/:userId/cart',middleware.authentication,middleware.authorization,CartController.updateCart)
+router.delete('/users/:userId/cart',middleware.authentication,middleware.authorization,CartController.deleteCart)
 
 router.all("/*", async function (req, res) {
     return res.status(400).send({ status: false, message: "Path is not valid" });
