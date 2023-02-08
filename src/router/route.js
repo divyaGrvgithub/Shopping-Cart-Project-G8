@@ -3,16 +3,17 @@ const router = express.Router()
 const UserController = require("../controllers/userController")
 const ProductController = require("../controllers/productController")
 const CartController = require("../controllers/cartController")
+const OrderController = require("../controllers/orderController")
 const Middleware = require("../middleware/auth.js")
 
-// **********************************USER API ******************************
+// **********************************USER APIs ******************************
 
 router.post("/register",UserController.createUser)
 router.post("/login",UserController.login)
 router.get("/user/:userId/profile",Middleware.authentication,UserController.getUserProfile)
 router.put("/user/:userId/profile",Middleware.authentication,Middleware.authorization,UserController.updateUser )
 
-// **********************************PRODUCT API******************************
+// **********************************PRODUCT APIs******************************
 
 router.post("/products",ProductController.createProduct)
 router.get("/products",ProductController.getAllProduct)
@@ -21,14 +22,15 @@ router.delete("/products/:productId",ProductController.deleteProductById)
 
 // **********************************************Cart APIs*********************
 
-router.post('/users/:userId/cart',Middleware.authentication,Middleware.authorization,CartController.createCart)
+router.post("/users/:userId/cart",Middleware.authentication,Middleware.authorization,CartController.createCart)
 router.get('/users/:userId/cart',Middleware.authentication,Middleware.authorization,CartController.getCart)
 router.put('/users/:userId/cart',Middleware.authentication,Middleware.authorization,CartController.updateCart)
 router.delete('/users/:userId/cart',Middleware.authentication,Middleware.authorization,CartController.deleteCart)
 
-// ***************************************Create Order**************************************
+// ***************************************Order APIs**************************************
 
-router.post("/users/:userId/orders",createOrder)
+router.post("/users/:userId/orders",Middleware.authentication,Middleware.authorization,OrderController.createOrder)
+router.put("/users/:userId/orders",Middleware.authentication,Middleware.authorization,OrderController.updateOrder)
 
 // **********************************************Invalid Path*******************************
 

@@ -95,7 +95,7 @@ const updateOrder = async function (req, res) {
         if (findOrder.status == "cancelled")
             return res.status(400).send({ status: false, message: "Can Not Update This Order, Because It's Cancelled Already" })
 
-        if (findOrder.userId != userId) return res.status(403).send({ status: false, message: "order is not blong to the user " })
+        if (findOrder.userId != userId) return res.status(403).send({ status: false, message: "order is not belong to the user " })
 
         if (status == "cancelled") {
             if (!findOrder.cancellable) return res.status(400).send({ status: false, message: "This order is not cancellable" })
