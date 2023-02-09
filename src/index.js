@@ -8,7 +8,7 @@ app.use(express.json())
 app.use( multer().any())
 app.use(bodyParser.json());
 mongoose.set("strictQuery",true)
-mongoose.connect("mongodb+srv://Abhi_functionup:dBalIHuDvBLH2uZK@abhi1.m5k3ewv.mongodb.net/product_management",{
+mongoose.connect("mongodb+srv://divyamala_:Dt25042000knp@divyamala.0cofsch.mongodb.net/group8Database",{
     useNewUrlParser:true
 })
 

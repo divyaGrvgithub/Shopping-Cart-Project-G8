@@ -85,10 +85,20 @@ const createCart = async (req, res) => {
         { _id: cartExist._id },
         { $set: updateCart },
         { new: true }
-      );
+      ).populate({
+        path: "items.productId",
+        model: "Product",
+        select: [
+          "title",
+          "price",
+          "currencyFormat",
+          "description",
+          "productImage",
+        ],
+      });
       return res
         .status(201)
-        .send({ status: true, message: "Success", data: createCart });
+        .json({ status: true, message: "Success", data: createCart });
     }
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
@@ -212,7 +222,17 @@ const updateCart = async (req, res) => {
     updateCart.totalItems = totalItems;
     updateCart.items = items;
     await updateCart.save();
-    let nextUpdate = await cartModel.findOne({ _id: cartId });
+    let nextUpdate = await cartModel.findOne({ _id: cartId }).populate({
+      path: "items.productId",
+      model: "Product",
+      select: [
+        "title",
+        "price",
+        "currencyFormat",
+        "description",
+        "productImage",
+      ],
+    });
 
     return res
       .status(200)
