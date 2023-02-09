@@ -10,6 +10,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const uploadFile = require("../router/aws");
+
 // ************************************************CREATE USER**********************************************************
 const userCreate = async (req, res) => {
   try {
@@ -57,7 +58,6 @@ const userCreate = async (req, res) => {
         });
       }
     }
-   
 
     const salt = bcrypt.genSaltSync(10);
     const codePass = bcrypt.hashSync(data.password, salt);
@@ -114,6 +114,7 @@ const login = async (req, res) => {
     return res.status(500).send({ status: false, message: err.message });
   }
 };
+
 // **********************************************************GETUSER PROFILE*******************************************
 const getUserProfile = async (req, res) => {
   try {
@@ -134,6 +135,7 @@ const getUserProfile = async (req, res) => {
     return res.status(500).send({ status: false, message: err.message });
   }
 };
+
 // ************************************************************UPDATE USER PROFILE********************************************
 const updateUser = async (req, res) => {
   try {

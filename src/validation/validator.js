@@ -105,25 +105,25 @@ const createProductJoi = joi.object({
   currencyFormat: joi.string().valid("₹"),
   isFreeShipping: joi.boolean().optional(),
   style: joi.string().optional(),
-  availableSizes:joi.string().optional(),
-    productImage: joi.optional(),
+  availableSizes: joi.string().optional(),
+  productImage: joi.optional(),
   installments: joi.number().optional(),
   deletedAt: joi.date().optional(),
   isDeleted: joi.boolean()
 });
 
-const updateProductJoi=joi.object({
+const updateProductJoi = joi.object({
   title: joi.string().optional(),
-  description:joi.string().optional(),
-  price:joi.number().optional(),
-  productImage:joi.optional(),
-  currencyId:joi.string().optional().valid("INR"),
+  description: joi.string().optional(),
+  price: joi.number().optional(),
+  productImage: joi.optional(),
+  currencyId: joi.string().optional().valid("INR"),
   currencyFormat: joi.string().optional().valid("₹"),
   isFreeShipping: joi.boolean().optional(),
-  style:joi.string().optional(),
-  availableSizes:joi.string().optional(),
+  style: joi.string().optional(),
+  availableSizes: joi.string().optional(),
   installments: joi.number().optional(),
-  deletedAt: joi.date(), 
+  deletedAt: joi.date(),
   isDeleted: joi.boolean(),
 })
 module.exports = {

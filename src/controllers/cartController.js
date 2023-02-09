@@ -3,6 +3,7 @@ const productModel = require("../models/productModel");
 const mongoose = require("mongoose");
 
 // **********************************************Create Cart******************************************************
+
 const createCart = async (req, res) => {
   try {
     let data = req.body;
@@ -94,7 +95,9 @@ const createCart = async (req, res) => {
     return res.status(500).send({ status: false, message: err.message });
   }
 };
+
 // *****************************************Get Cart***************************************************
+
 const getCart = async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -120,7 +123,9 @@ const getCart = async (req, res) => {
     res.status(500).send({ Status: false, message: err.message });
   }
 };
+
 // ******************************************Update Cart**********************************************************
+
 const updateCart = async (req, res) => {
   try {
     const data = req.body;
@@ -221,7 +226,9 @@ const updateCart = async (req, res) => {
     res.status(500).send({ Status: false, message: err.message });
   }
 };
+
 // ****************************************************Delete Cart******************************************
+
 const deleteCart = async (req, res) => {
   try {
     let userId = req.params.userId;

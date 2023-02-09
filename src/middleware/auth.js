@@ -1,6 +1,9 @@
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const userModel = require("../models/userModel");
+
+// **********************************AUTHENTICATION******************************
+
 const authentication = async (req, res, next) => {
   try {
     let token = req.headers["authorization"];
@@ -20,6 +23,8 @@ const authentication = async (req, res, next) => {
     res.status(500).send({ status: false, error: error.message });
   }
 };
+
+// **********************************AUTHORIZATION******************************
 
 const authorization = async (req, res, next) => {
  try{

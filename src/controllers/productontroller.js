@@ -67,6 +67,7 @@ const createProduct = async (req, res) => {
     return res.status(500).send({ status: false, message: err.message });
   }
 };
+
 // ***********************************************GET PRODUCT BY QUERY***********************************************
 
 const getAllProduct = async (req, res) => {
@@ -287,6 +288,7 @@ const updateProduct = async (req, res) => {
     return res.status(500).send({ status: false, error: error.message });
   }
 };
+
 // *********************************************************DELETE PRODUCT**********************************************
 const deleteProduct = async (req, res) => {
   try {
@@ -317,10 +319,4 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-module.exports = {
-  createProduct,
-  deleteProduct,
-  getAllProduct,
-  getProductsById,
-  updateProduct,
-};
+module.exports = {createProduct,deleteProduct,getAllProduct,getProductsById,updateProduct};

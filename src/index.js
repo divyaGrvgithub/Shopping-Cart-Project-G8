@@ -4,11 +4,14 @@ const router = require("./router/route")
 const mongoose = require("mongoose")
 const app = express()
 const multer= require("multer");
+const { AppConfig } = require('aws-sdk');
+
 app.use(express.json())
 app.use( multer().any())
 app.use(bodyParser.json());
+
 mongoose.set("strictQuery",true)
-mongoose.connect("mongodb+srv://Abhi_functionup:dBalIHuDvBLH2uZK@abhi1.m5k3ewv.mongodb.net/product_management",{
+mongoose.connect("mongodb+srv://divyamala_:Dt25042000knp@divyamala.0cofsch.mongodb.net/group8Database",{
     useNewUrlParser:true
 })
 
@@ -17,6 +20,6 @@ mongoose.connect("mongodb+srv://Abhi_functionup:dBalIHuDvBLH2uZK@abhi1.m5k3ewv.m
 
 app.use("/",router)
 
-app.listen(3000,()=>{
-    console.log("This is App Running On Port "+3000)
+app.listen(process.env.Port||3000,()=>{
+    console.log("Express App Running On Port",+(process.env.Port||3000))
 })

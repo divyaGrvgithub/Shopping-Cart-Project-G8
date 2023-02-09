@@ -74,6 +74,7 @@ delete newOrderCreate.isDeleted
     return res.status(500).send({ status: false, error: error.message });
   }
 };
+
 // **********************************************UPDATE ORDER******************************
 
 const updateOrder = async function (req, res) {
@@ -110,6 +111,5 @@ const updateOrder = async function (req, res) {
         return res.status(500).send({ status: false, message: error.message })
     }
 }
-
 
 module.exports = { createOrder,updateOrder };
