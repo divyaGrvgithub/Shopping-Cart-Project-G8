@@ -20,13 +20,16 @@ const userJoi = joi.object({
     .required()
     .regex(/^[A-Za-z0-9._]{3,}@[A-Za-z]{3,}[.]{1,}[A-Za-z.]{2,8}$/)
     .message("please enter valid email"),
+
   profileImage: joi.string().trim(),
+  
   phone: joi
     .string()
     .trim()
     .required()
     .regex(/^[0]?[6789]\d{9}$/)
     .message("phone is not valid"),
+
   password: joi.string().required().min(8).max(15),
   address: joi.object({
     shipping: joi.object({
