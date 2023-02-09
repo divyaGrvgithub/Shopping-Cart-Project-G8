@@ -1,6 +1,6 @@
 const productModel = require("../models/productModel");
 const uploadFile = require("../router/aws");
-const { createProductJoi } = require("../validation/validator");
+const { createProductJoi,updateJoi} = require("../validation/validator");
 const mongoose = require("mongoose");
 
 // **********************************************CREATE PRODUCT****************************************************************
@@ -147,6 +147,43 @@ let getProductsById = async (req, res) => {
       return res.status(500).send({ error: error.message })
   }
 }
+
+// **********************************************Update Poduct ******************************
+const updateProduct = async (req, res) => {
+  try {
+    let files = req.files
+    let data = req.body
+    let filter={...data}
+    let productId = req.params.productId
+
+    let fileUrl;
+
+    if (files && files.length > 0) {
+      const uploadedFileURL = await uploadFile(files[0])
+      fileUrl = uploadedFileURL;
+    } 
+    data.productImage = fileUrl
+
+    if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "enter some data to update" })
+
+    if (!mongoose.Types.ObjectId.isValid(productId)) return res.status(400).send({ status: false, message: "this productId is not valid" })
+    let title = req.body.title
+    try {
+      await updateJoi.validateAsync(data)
+    } catch (error) {
+      return res.status(400).send({ status: false, message: error.message })
+    }
+   
+    let checkDb = await productModel.findOne({ title:title })
+    if (checkDb) return res.status(400).send({status: false,  message: "this title  already exist" })
+
+    let update = await productModel.findByIdAndUpdate(productId, { $set: {filter} }, { new: true })
+    return res.status(200).send({ status: true, message: "successfully updated", data: update })
+
+  } catch (error) {
+    return res.status(500).send({ status: false, error: error.message })
+  }
+}
 // *********************************************************DELETE PRODUCT**********************************************
 const deleteProduct = async (req, res) => {
   try {
@@ -178,4 +215,6 @@ const deleteProduct = async (req, res) => {
     return res.status(500).send({ status: false, message: e.message });
   }
 };
-module.exports = { createProduct, deleteProduct, getAllProduct,getProductsById };
+
+
+module.exports = { createProduct, deleteProduct, getAllProduct,getProductsById,updateProduct };
