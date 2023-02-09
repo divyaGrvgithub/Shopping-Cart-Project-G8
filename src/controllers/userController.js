@@ -1,26 +1,20 @@
 const userModel = require("../models/userModel");
-const {
-  userlogin,
-  userJoi,
-  updateUserJoi,
-  isValidPinCode,
-} = require("../validation/validator");
+const { userlogin, userJoi, updateUserJoi, isValidPinCode, } = require("../validation/validator");
 const jwt = require("jsonwebtoken");
-// const PIN = require("pincode-validator");
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const uploadFile = require("../router/aws");
 
 // ************************************************CREATE USER**********************************************************
+
 const userCreate = async (req, res) => {
   try {
     let data = req.body;
     let files = req.files;
     if (Object.keys(req.body).length == 0) {
-      return res
-        .status(400)
-        .send({ status: false, message: "Please Enter data first" });
+      return res.status(400).send({ status: false, message: "Please Enter data first" });
     }
+
     let address = JSON.parse(data.address);
     data.address = address;
     if (files && files.length > 0) {
@@ -29,33 +23,27 @@ const userCreate = async (req, res) => {
     } else {
       return res.status(400).send({ status: false, message: "No file found" });
     }
+
     try {
       await userJoi.validateAsync(data);
     } catch (err) {
       return res.status(400).send({ status: false, message: err.message });
     }
+
     let pincodeShipping = data.address.shipping.pincode;
     let pincodeBilling = data.address.billing.pincode;
     if (!isValidPinCode(pincodeShipping) || !isValidPinCode(pincodeBilling))
-      return res.status(400).send({
-        status: false,
-        message:
-          "pin code in shipping address or billing address  is not valid",
-      });
+      return res.status(400).send({ status: false, message: "pin code in shipping address or billing address  is not valid" });
+
     let existUser = await userModel.findOne({
       $or: [{ email: data.email }, { phone: data.phone }],
     });
     if (existUser) {
       if (existUser.email == data.email) {
-        return res
-          .status(400)
-          .send({ status: false, message: "This email is already in use" });
+        return res.status(400).send({ status: false, message: "This email is already in use" });
       } else {
         existUser.phone == data.phone;
-        return res.status(400).send({
-          status: false,
-          message: "This phone number is already in use",
-        });
+        return res.status(400).send({ status: false, message: "This phone number is already in use", });
       }
     }
 
@@ -64,16 +52,13 @@ const userCreate = async (req, res) => {
     data.password = codePass;
 
     let create = await userModel.create(data);
-    return res.status(201).send({
-      status: true,
-      message: "User created successfully",
-      data: create,
-    });
-  } catch (err) {
-    return res.status(500).send({ status: false, message: err.message });
+    return res.status(201).send({ status: true, message: "User created successfully", data: create });
+  } catch (error) {
+    return res.status(500).send({ status: false, message: error.message });
   }
 };
-// ******************************************************LOGIN USER**************************************************************
+// ******************************************************LOGIN USER********************************************************
+
 const login = async (req, res) => {
   try {
     let data = req.body;
@@ -81,34 +66,29 @@ const login = async (req, res) => {
     let password = data.password;
 
     if (Object.keys(data).length == 0)
-      return res
-        .status(400)
-        .send({ status: false, message: "please enter data first" });
+      return res.status(400).send({ status: false, message: "please enter data first" });
+
     try {
       await userlogin.validateAsync(data);
     } catch (error) {
-      return res.status(400).send({status:false, message: error.message });
+      return res.status(400).send({ status: false, message: error.message });
     }
+
     let findeUser = await userModel.findOne({ email: email.trim() });
     if (!findeUser)
-      return res
-        .status(400)
-        .send({ status: false, message: "Credentials do not match" });
+      return res.status(400).send({ status: false, message: "Credentials do not match" });
 
     let codePass = findeUser.password;
     let originalPass = bcrypt.compareSync(password, codePass);
     if (!originalPass)
-      return res
-        .status(401)
-        .send({ status: false, message: "password incorrect" });
+      return res.status(401).send({ status: false, message: "password incorrect" });
+
     let token = jwt.sign({ userId: findeUser._id }, "group8", {
       expiresIn: "24h",
     });
-   
+
     res.status(200).send({
-      status: true,
-      message: "User login successfully",
-      data: { userId: findeUser._id, token: token },
+      status: true, message: "User login successfully", data: { userId: findeUser._id, token: token }
     });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
@@ -127,9 +107,7 @@ const getUserProfile = async (req, res) => {
       return res.status(404).send({ status: false, message: "user not found" });
 
     return res.status(200).send({
-      status: true,
-      message: "User profile details",
-      data: userProfile,
+      status: true, message: "User profile details", data: userProfile
     });
   } catch (err) {
     return res.status(500).send({ status: false, message: err.message });
@@ -137,6 +115,7 @@ const getUserProfile = async (req, res) => {
 };
 
 // ************************************************************UPDATE USER PROFILE********************************************
+
 const updateUser = async (req, res) => {
   try {
     let userId = req.params.userId;
@@ -151,10 +130,9 @@ const updateUser = async (req, res) => {
 
     // data.profileImage = fileUrl;
     if (Object.keys(data).length == 0) {
-      return res
-        .status(400)
-        .send({ status: false, message: "Please Enter data to update" });
+      return res.status(400).send({ status: false, message: "Please Enter data to update" })
     }
+
     if (data.address) {
       let address = JSON.parse(data.address);
       data.address = address;
@@ -165,10 +143,8 @@ const updateUser = async (req, res) => {
     } catch (err) {
       return res.status(400).send({ status: false, message: err.message });
     }
-    let userdata = await userModel
-      .findOne({ _id: userId })
-      .select({ _id: 0, updatedAt: 0, createdAt: 0, __v: 0 })
-      .lean();
+
+    let userdata = await userModel.findOne({ _id: userId }).select({ _id: 0, updatedAt: 0, createdAt: 0, __v: 0 }).lean();
     if (fileUrl) {
       userdata.profileImage = fileUrl;
     }
@@ -187,7 +163,6 @@ const updateUser = async (req, res) => {
       if (data.address.billing) {
         if (data.address.billing.city) {
           data.address.billing.city = userdata.address.billing.city;
-          // console.log("hii")
         }
       }
     }
@@ -203,15 +178,13 @@ const updateUser = async (req, res) => {
         if (data.address.billing.pincode) {
           if (!isValidPinCode(data.address.billing.pincode))
             return res
-              .status(400)
-              .send({ status: false, message: "please enter valid PIN" });
+              .status(400).send({ status: false, message: "please enter valid PIN" });
           userdata.address.billing.pincode = data.address.billing.pincode;
         }
       }
     }
     if (data.address) {
       if (data.address.shipping) {
-        // console.log("hii")
         if (data.address.shipping.city) {
           userdata.address.shipping.city = data.address.shipping.city;
         }
@@ -229,23 +202,16 @@ const updateUser = async (req, res) => {
         if (data.address.shipping.pincode) {
           if (!isValidPinCode(data.address.shipping.pincode))
             return res
-              .status(400)
-              .send({ status: false, message: "please enter valid PIN" });
+              .status(400).send({ status: false, message: "please enter valid PIN" });
           userdata.address.shipping.pincode = data.address.shipping.pincode;
         }
       }
     }
-
     if (data.email) {
       let checkEmail = await userModel.findOne({ email: data.email });
       if (checkEmail) {
         if (checkEmail.email == data.email)
-          return res
-            .status(400)
-            .send({
-              status: false,
-              message: `this mail [${data.email}] is already in use`,
-            });
+          return res.status(400).send({ status: false, message: `this mail [${data.email}] is already in use` });
       }
       if (!checkEmail) {
         userdata.email = data.email;
@@ -256,11 +222,7 @@ const updateUser = async (req, res) => {
       if (checkPhone) {
         if (checkPhone.phone == data.phone)
           return res
-            .status(400)
-            .send({
-              status: false,
-              message: `this Phone number-( ${data.phone} )is already in use`,
-            });
+            .status(400).send({ status: false, message: `this Phone number-( ${data.phone} )is already in use` });
       }
       if (!checkPhone) {
         userdata.phone = data.phone;
@@ -272,21 +234,14 @@ const updateUser = async (req, res) => {
       const codePass = bcrypt.hashSync(data.password, salt);
       data.password = codePass;
     }
-
     //updation of data
-    const updateData = await userModel.findByIdAndUpdate(
-      userId,
-      { $set: userdata },
-      { new: true }
-    );
-
+    const updateData = await userModel.findByIdAndUpdate(userId, { $set: userdata }, { new: true });
     return res.status(200).send({
-      status: true,
-      message: "Update user profile is successful",
-      data: updateData,
+      status: true, message: "Update user profile is successful", data: updateData,
     });
-  } catch (err) {
-    return res.status(500).send({ status: false, message: err.message });
+  } catch (error) {
+    return res.status(500).send({ status: false, message: error.message });
   }
 };
+
 module.exports = { login, getUserProfile, userCreate, updateUser };
