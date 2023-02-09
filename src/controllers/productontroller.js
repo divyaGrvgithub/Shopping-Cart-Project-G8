@@ -158,7 +158,7 @@ let getProductsById = async (req, res) => {
         .status(400)
         .send({ status: false, message: "Invalid ObjectId" });
 
-    const products = await productModel.findById({
+    const products = await productModel.findOne({
       _id: productId,
       isDeleted: false,
     });
