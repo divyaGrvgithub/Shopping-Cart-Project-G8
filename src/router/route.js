@@ -30,8 +30,8 @@ router.delete('/users/:userId/cart',authentication, authorization, deleteCart)
 
 // ***************************************Create Order***************************
 
-router.post("/users/:userId/orders",createOrder)
-router.put('/users/:userId/orders',updateOrder)
+router.post("/users/:userId/orders",authentication, authorization,createOrder)
+router.put('/users/:userId/orders',authentication, authorization,updateOrder)
 
 // **********************************************Invalid Path*******************
 

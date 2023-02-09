@@ -1,4 +1,5 @@
 const joi = require("joi");
+const mongoose=require("mongoose")
 
 const userJoi = joi.object({
   fname: joi
@@ -126,6 +127,10 @@ const updateProductJoi = joi.object({
   deletedAt: joi.date(),
   isDeleted: joi.boolean(),
 })
+
+const validObjectId = function (objectId) {
+  return mongoose.Types.ObjectId.isValid(objectId)
+}
 module.exports = {
   userlogin,
   userJoi,
@@ -133,4 +138,5 @@ module.exports = {
   updateProductJoi,
   updateUserJoi,
   createProductJoi,
+  validObjectId
 };

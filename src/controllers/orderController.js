@@ -2,6 +2,8 @@ const orderModel = require("../models/orderModel");
 const cartModel = require("../models/cartModel");
 const mongoose = require("mongoose");
 
+// *********************************************************CREATE ORDER**********************************************
+
 const createOrder = async function (req, res) {
   try {
     let userId = req.params.userId;

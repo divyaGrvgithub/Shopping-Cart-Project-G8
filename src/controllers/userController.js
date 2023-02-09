@@ -27,12 +27,12 @@ const userCreate = async (req, res) => {
       let uploadedFileURL = await uploadFile(files[0]);
       data.profileImage = uploadedFileURL;
     } else {
-      return res.status(400).send({ msg: "No file found" });
+      return res.status(400).send({ status: false, message: "No file found" });
     }
     try {
       await userJoi.validateAsync(data);
     } catch (err) {
-      return res.status(400).send({ msg: err.message });
+      return res.status(400).send({ status: false, message: err.message });
     }
     let pincodeShipping = data.address.shipping.pincode;
     let pincodeBilling = data.address.billing.pincode;
@@ -70,7 +70,7 @@ const userCreate = async (req, res) => {
       data: create,
     });
   } catch (err) {
-    return res.status(500).send({ message: err.message });
+    return res.status(500).send({ status: false, message: err.message });
   }
 };
 // ******************************************************LOGIN USER**************************************************************
@@ -163,7 +163,7 @@ const updateUser = async (req, res) => {
     try {
       await updateUserJoi.validateAsync(data);
     } catch (err) {
-      return res.status(400).send({ msg: err.message });
+      return res.status(400).send({ status: false, message: err.message });
     }
     let userdata = await userModel
       .findOne({ _id: userId })

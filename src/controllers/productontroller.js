@@ -27,7 +27,7 @@ const createProduct = async (req, res) => {
     try {
       await createProductJoi.validateAsync(data);
     } catch (err) {
-      return res.status(400).send({ msg: err.message });
+      return res.status(400).send({ status: false, message: err.message });
     }
     if (data.availableSizes) {
       let reqSize = data.availableSizes.toUpperCase().split(",");
@@ -172,7 +172,7 @@ let getProductsById = async (req, res) => {
       .status(200)
       .send({ status: true, message: "Success", data: products });
   } catch (error) {
-    return res.status(500).send({ error: error.message });
+    return res.status(500).send({ status: false, error: error.message });
   }
 };
 
@@ -196,7 +196,7 @@ const updateProduct = async (req, res) => {
     try {
       await updateProductJoi.validateAsync(data);
     } catch (err) {
-      return res.status(400).send({ msg: err.message });
+      return res.status(400).send({ status: false, message: err.message });
     }
 
     //exist product id
@@ -290,6 +290,7 @@ const updateProduct = async (req, res) => {
 };
 
 // *********************************************************DELETE PRODUCT**********************************************
+
 const deleteProduct = async (req, res) => {
   try {
     const productId = req.params.productId;
@@ -314,8 +315,8 @@ const deleteProduct = async (req, res) => {
     return res
       .status(200)
       .send({ status: true, message: "Product is deleted" });
-  } catch (e) {
-    return res.status(500).send({ status: false, message: e.message });
+  } catch (error) {
+    return res.status(500).send({ status: false, message: error.message });
   }
 };
 
