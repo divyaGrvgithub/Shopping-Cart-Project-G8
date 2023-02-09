@@ -7,7 +7,7 @@ const createOrder = async function (req, res) {
     let userId = req.params.userId;
     let data = req.body;
     const { cancellable, status, cartId } = data;
-    if (!Object.keys(data))
+    if (!Object.keys(data).length==0)
       return res
         .status(400)
         .send({ status: false, message: "please provide some data" });
@@ -110,7 +110,6 @@ const updateOrder = async function (req, res) {
         return res.status(500).send({ status: false, message: error.message })
     }
 }
-
 
 
 module.exports = { createOrder,updateOrder };
