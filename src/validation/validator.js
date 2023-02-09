@@ -98,21 +98,6 @@ const isValidPinCode = (value) => {
   return result;
 };
 const createProductJoi = joi.object({
-  title: joi.string().required(),
-  description: joi.string().required(),
-  price: joi.number().required(),
-  currencyId: joi.string().required().valid("INR"),
-  currencyFormat: joi.string().valid("₹"),
-  isFreeShipping: joi.boolean().optional(),
-  productImage:joi.string().trim(),
-  style: joi.string().optional(),
-  availableSizes: joi.string().optional(),
-  installments: joi.number().optional(),
-  deletedAt: joi.date(),
-  isDeleted: joi.boolean(),
-});
-
-const updateJoi=joi.object({
   title: joi.string().optional(),
   description: joi.string().optional(),
   price: joi.number(),
@@ -120,20 +105,32 @@ const updateJoi=joi.object({
   currencyFormat: joi.string().valid("₹"),
   isFreeShipping: joi.boolean().optional(),
   style: joi.string().optional(),
-  availableSizes: joi
-    .string()
-    .valid("S", "XS", "M", "X", "L", "XXL", "XL")
-    .optional(),
-    productImage: joi.string().trim(),
+  availableSizes:joi.string().optional(),
+    productImage: joi.optional(),
   installments: joi.number().optional(),
-  deletedAt: joi.date().optional()
+  deletedAt: joi.date().optional(),
+  isDeleted: joi.boolean()
+});
 
+const updateProductJoi=joi.object({
+  title: joi.string().optional(),
+  description:joi.string().optional(),
+  price:joi.number().optional(),
+  productImage:joi.optional(),
+  currencyId:joi.string().optional().valid("INR"),
+  currencyFormat: joi.string().optional().valid("₹"),
+  isFreeShipping: joi.boolean().optional(),
+  style:joi.string().optional(),
+  availableSizes:joi.string().optional(),
+  installments: joi.number().optional(),
+  deletedAt: joi.date(), 
+  isDeleted: joi.boolean(),
 })
 module.exports = {
   userlogin,
   userJoi,
   isValidPinCode,
-  updateJoi,
+  updateProductJoi,
   updateUserJoi,
   createProductJoi,
 };
